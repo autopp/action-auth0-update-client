@@ -1,0 +1,39 @@
+name: 'action-auth0-update-client'
+description: "Update Auth0's client"
+author: 'autopp'
+inputs:
+  api_client_id:
+    required: true
+    description: 'The client ID to get access token'
+    default: ''
+  api_client_secret:
+    required: true
+    description: 'The client secret to get access token'
+    default: ''
+  operation:
+    required: true
+    description: '"add" or "remove"'
+    default: 'add'
+  client_id:
+    required: true
+    description: 'The client id of target client'
+    default: ''
+  callback_url:
+    required: false
+    description: 'The callback URL to be added or removeed'
+    default: ''
+  logout_url:
+    required: false
+    description: 'The logout URL to be added or removed'
+    default: ''
+  web_origin:
+    required: false
+    description: 'The web origin to be added or removed'
+    default: ''
+  origin:
+    required: false
+    description: 'The origin to be added or removed'
+    default: ''
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
