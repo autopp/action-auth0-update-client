@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { ManagementClient } from 'auth0'
+import { ManagementClient, ManagementClientOptions } from 'auth0'
 import { ClientUpdater, UpdateParams, UpdateResult } from './client-updater'
 
 async function run(): Promise<void> {
@@ -21,13 +21,14 @@ async function run(): Promise<void> {
     const origin = core.getInput('origin')
     const telemetry = core.getInput('telemetry') === '' ? false : core.getBooleanInput('telemetry')
 
+    // TODO: remove cast after https://github.com/DefinitelyTyped/DefinitelyTyped/pull/63915 is merged
     const management = new ManagementClient({
       domain,
       clientId: apiClientId,
       clientSecret: apiClientSecret,
       scope: 'read:clients update:clients',
       telemetry,
-    })
+    } as ManagementClientOptions)
 
     const clientUpdater = new ClientUpdater(management)
     const params: UpdateParams = {}
