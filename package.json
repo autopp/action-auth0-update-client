@@ -17,14 +17,17 @@
     "type": "git",
     "url": "git+https://github.com/autopp/action-auth0-update-client.git"
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@actions/core": "^1.10.0"
+    "@actions/core": "^1.10.0",
+    "@types/auth0": "^2.35.8",
+    "auth0": "^3.1.1",
+    "jest-mock-extended": "^3.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^27.5.2",
     "@types/node": "^18.11.0",
     "@typescript-eslint/parser": "^4.33.0",
     "@vercel/ncc": "^0.31.1",

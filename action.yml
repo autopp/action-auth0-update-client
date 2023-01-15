@@ -2,6 +2,10 @@ name: 'action-auth0-update-client'
 description: "Update Auth0's client"
 author: 'autopp'
 inputs:
+  domain:
+    required: true
+    description: 'The domain of Auth0'
+    default: ''
   api_client_id:
     required: true
     description: 'The client ID to get access token'
@@ -34,6 +38,10 @@ inputs:
     required: false
     description: 'The origin to be added or removed'
     default: ''
+  telemetry:
+    required: false
+    description: 'Send telemetry to Auth0'
+    default: 'false'
 runs:
   using: 'node16'
   main: 'dist/index.js'

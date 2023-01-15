@@ -1,16 +1,54 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import { ManagementClient } from 'auth0'
+import { ClientUpdater, UpdateParams, UpdateResult } from './client-updater'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const domain = core.getInput('domain', { required: true })
+    const apiClientId = core.getInput('api_client_id', { required: true })
+    const apiClientSecret = core.getInput('api_client_secret', {
+      required: true,
+    })
+    const operation = core.getInput('operation', { required: true })
+    if (operation !== 'add' && operation !== 'remove') {
+      throw new Error('operation should be "add" or "remove"')
+    }
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const clientId = core.getInput('client_id', { required: true })
+    const callbackUrl = core.getInput('callback_url')
+    const logoutUrl = core.getInput('logout_url')
+    const webOrigin = core.getInput('web_origin')
+    const origin = core.getInput('origin')
+    const telemetry = core.getInput('telemetry') === '' ? false : core.getBooleanInput('telemetry')
 
-    core.setOutput('time', new Date().toTimeString())
+    const management = new ManagementClient({
+      domain,
+      clientId: apiClientId,
+      clientSecret: apiClientSecret,
+      scope: 'read:clients update:clients',
+      telemetry,
+    })
+
+    const clientUpdater = new ClientUpdater(management)
+    const params: UpdateParams = {}
+    if (callbackUrl !== '') {
+      params['callbackUrl'] = callbackUrl
+    }
+    if (logoutUrl !== '') {
+      params['logoutUrl'] = logoutUrl
+    }
+    if (webOrigin !== '') {
+      params['webOrigin'] = webOrigin
+    }
+    if (origin !== '') {
+      params['origin'] = origin
+    }
+
+    const result = await clientUpdater[operation](clientId, params)
+
+    const updatedProps = (Object.keys(result) as (keyof UpdateResult)[]).filter(p => result[p])
+    const message = updatedProps.length === 0 ? 'Nothing to do' : `Updated ${updatedProps.join(', ')}`
+    core.info(message)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
